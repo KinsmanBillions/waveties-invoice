@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}{{ invoice_no }} – WaveTies
+{% if inv.payments %}
+<div class="card">
+  <div class="card-title">Payment History</div>
+  <table>
+    <thead><tr><th>Date</th><th>Amount</th><th>By</th><th>Note</th></tr></thead>
+    <tbody>
+    {% for p in inv.payments %}
+      <tr>
+        <td>{{ p.at }}</td>
+        <td>{{ inv.currency or 'GHS' }} {{ "%.2f"|format(p.amount) }}</td>
+        <td>{{ p.by }}</td>
+        <td>{{ p.note or '—' }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>{{ invoice_no }}</h1>
+  <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+    <a href="{{ url_for('download_pdf', invoice_no=invoice_no) }}" class="btn btn-primary">Download PDF</a>
+    {% if (inv.balance_due or 0) > 0 %}
+    <a href="{{ url_for('mark_paid', invoice_no=invoice_no) }}" class="btn btn-navy">Record Payment</a>
+    {% endif %}
+    <a href="{{ url_for('email_invoice', invoice_no=invoice_no) }}" class="btn btn-outline">Email PDF</a>
+    {% set wa_text = 'Invoice ' ~ invoice_no ~ ' – Balance: ' ~ (inv.currency or 'GHS') ~ ' ' ~ '%.2f'|format(inv.balance_due or inv.total or 0) %}
+    <a href="https://wa.me/?text={{ wa_text|urlencode }}" target="_blank" class="btn btn-outline">WhatsApp</a>
+    <a href="{{ url_for('regenerate_pdf', invoice_no=invoice_no) }}" class="btn btn-outline">Regenerate</a>
+    <a href="{{ url_for('invoice_list') }}" class="btn btn-outline">← Back</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="form-row">
+    <div>
+      <div class="card-title">Bill To</div>
+      <p style="font-size:1.1rem;font-weight:600;">{{ inv.customer_name }}</p>
+      {% if inv.customer_email %}
+      <p style="color:var(--muted);">{{ inv.customer_email }}</p>
+      {% endif %}
+    </div>
+    <div>
+      <div class="card-title">Invoice Details</div>
+      <table style="font-size:0.9rem;">
+        <tr><td style="color:var(--muted);padding:0.25rem 0.5rem 0.25rem 0;">Date</td><td>{{ inv.invoice_date }}</td></tr>
+        <tr><td style="color:var(--muted);padding:0.25rem 0.5rem 0.25rem 0;">Due Date</td><td style="color:var(--cyan-dark);font-weight:600;">{{ inv.due_date }}</td></tr>
+        <tr><td style="color:var(--muted);padding:0.25rem 0.5rem 0.25rem 0;">Created by</td><td>{{ inv.created_by or '—' }}</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Line Items</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Tracking No.</th>
+        <th>Item</th>
+        <th>Transport</th>
+        <th>Boxes</th>
+        <th>Wt (kg)</th>
+        <th>Vol</th>
+        <th>Order No.</th>
+        <th style="text-align:right;">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in inv['items'] %}
+      <tr>
+        <td>{{ item.tracking }}</td>
+        <td>{{ item.item_name }}</td>
+        <td>{{ item.transport }}</td>
+        <td>{{ item.boxes }}</td>
+        <td>{{ item.weight_kg }}</td>
+        <td>{{ item.vol_cbm }}</td>
+        <td>{{ item.order_number or '—' }}</td>
+        <td style="text-align:right;">{{ inv.currency or 'GHS' }} {{ "%.2f"|format(item.amount or 0) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="form-row">
+  <div class="card">
+    <div class="card-title">Payment Info</div>
+    <p><b>MOMO:</b> {{ inv.momo or company.momo }}</p>
+    <p style="margin-top:0.5rem;"><b>BANK:</b></p>
+    <ul style="margin-left:1.25rem;color:var(--muted);">
+      {% for line in (inv.bank_lines or company.bank_lines) %}
+      <li>{{ line }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-title">Totals</div>
+    <table style="font-size:0.95rem;">
+      <tr>
+        <td style="color:var(--muted);">Subtotal</td>
+        <td style="text-align:right;">{{ inv.currency or 'GHS' }} {{ "%.2f"|format(inv.subtotal or 0) }}</td>
+      </tr>
+      <tr>
+        <td style="color:var(--muted);">Tax</td>
+        <td style="text-align:right;">{{ inv.currency or 'GHS' }} {{ "%.2f"|format(inv.tax or 0) }}</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600;">Total</td>
+        <td style="text-align:right;font-weight:600;">{{ inv.currency or 'GHS' }} {{ "%.2f"|format(inv.total or 0) }}</td>
+      </tr>
+      <tr>
+        <td style="color:var(--muted);">Paid</td>
+        <td style="text-align:right;">({{ inv.currency or 'GHS' }} {{ "%.2f"|format(inv.paid or 0) }})</td>
+      </tr>
+      <tr style="background:#FFF0E0;">
+        <td style="font-weight:700;color:var(--cyan-dark);padding-top:0.75rem;">Balance Due</td>
+        <td style="text-align:right;font-weight:700;color:var(--cyan-dark);padding-top:0.75rem;font-size:1.15rem;">
+          {{ inv.currency or 'GHS' }} {{ "%.2f"|format(inv.balance_due or 0) }}
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+{% if inv.payments %}
+<div class="card">
+  <div class="card-title">Payment History</div>
+  <table>
+    <thead><tr><th>Date</th><th>Amount</th><th>By</th><th>Note</th></tr></thead>
+    <tbody>
+    {% for p in inv.payments %}
+      <tr>
+        <td>{{ p.at }}</td>
+        <td>{{ inv.currency or 'GHS' }} {{ "%.2f"|format(p.amount) }}</td>
+        <td>{{ p.by }}</td>
+        <td>{{ p.note or '—' }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% endblock %}

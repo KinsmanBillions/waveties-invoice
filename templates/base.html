@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}WaveTies Invoicing{% endblock %}</title>
+  <style>
+    :root {
+      --navy: #0A2540;
+      --cyan: #00B4D8;
+      --cyan-dark: #0077B6;
+      --bg: #F4F7FB;
+      --card: #ffffff;
+      --text: #1A1A2E;
+      --muted: #5A6A7A;
+      --border: #E2E8F0;
+      --success: #10B981;
+      --danger: #EF4444;
+      --warning: #F59E0B;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+    a { color: var(--cyan-dark); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Navbar */
+    .navbar {
+      background: var(--navy);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: white;
+      text-decoration: none;
+    }
+    .navbar-brand img { height: 36px; width: 36px; border-radius: 6px; }
+    .navbar-nav { display: flex; gap: 1.25rem; align-items: center; }
+    .navbar-nav a {
+      color: rgba(255,255,255,0.85);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+    }
+    .navbar-nav a:hover { color: var(--cyan); text-decoration: none; }
+    .badge-role {
+      background: var(--cyan);
+      color: var(--navy);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+
+    /* Layout */
+    .container { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .page-header h1 { font-size: 1.5rem; color: var(--navy); }
+
+    /* Cards */
+    .card {
+      background: var(--card);
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    .card-title { font-size: 1rem; font-weight: 600; color: var(--navy); margin-bottom: 0.75rem; }
+
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat-card {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--cyan);
+    }
+    .stat-card .label { font-size: 0.8rem; color: var(--muted); }
+    .stat-card .value { font-size: 1.5rem; font-weight: 700; color: var(--navy); }
+
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    th {
+      text-align: left;
+      padding: 0.65rem 0.75rem;
+      background: var(--navy);
+      color: white;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+    td { padding: 0.65rem 0.75rem; border-bottom: 1px solid var(--border); }
+    tr:hover td { background: #F0F9FF; }
+    .status-due { color: var(--warning); font-weight: 600; }
+    .status-paid { color: var(--success); font-weight: 600; }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .btn-primary { background: var(--cyan); color: var(--navy); }
+    .btn-primary:hover { background: var(--cyan-dark); color: white; text-decoration: none; }
+    .btn-navy { background: var(--navy); color: white; }
+    .btn-navy:hover { background: #163A5F; text-decoration: none; }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-outline:hover { background: var(--bg); text-decoration: none; }
+    .btn-sm { padding: 0.3rem 0.7rem; font-size: 0.8rem; }
+    .btn-danger { background: var(--danger); color: white; }
+
+    /* Forms */
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-bottom: 0.3rem; }
+    input[type="text"], input[type="email"], input[type="number"], input[type="password"],
+    select, textarea {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      background: white;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(0,180,216,0.15);
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+    /* Alerts */
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+    .alert-success { background: #D1FAE5; color: #065F46; }
+    .alert-danger { background: #FEE2E2; color: #991B1B; }
+    .alert-warning { background: #FEF3C7; color: #92400E; }
+    .alert-info { background: #E0F2FE; color: #075985; }
+
+    /* Line items */
+    .line-items-table input { font-size: 0.8rem; padding: 0.4rem; }
+    .line-items-table th { font-size: 0.75rem; }
+    .remove-row { color: var(--danger); cursor: pointer; font-weight: 700; }
+
+    /* Login page */
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--navy) 0%, #163A5F 100%);
+    }
+    .login-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    .login-card h1 { text-align: center; color: var(--navy); margin-bottom: 0.25rem; }
+    .login-card .tagline { text-align: center; color: var(--muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  {% if session.get('username') %}
+  <nav class="navbar">
+    <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="WaveTies" onerror="this.style.display='none'">
+      WaveTies
+    </a>
+    <div class="navbar-nav">
+      <a href="{{ url_for('dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('invoice_list') }}">Invoices</a>
+      <a href="{{ url_for('create_invoice_page') }}">+ New Invoice</a>
+      <a href="{{ url_for('customers_list') }}">Customers</a>
+      <a href="{{ url_for('reports') }}">Reports</a>
+      {% if session.get('role') == 'admin' %}
+      <a href="{{ url_for('admin_users') }}">Users</a>
+      <a href="{{ url_for('admin_smtp') }}">Email Setup</a>
+      {% endif %}
+      <span style="color:rgba(255,255,255,0.6);font-size:0.85rem;">
+        {{ session.get('name') }}
+        <span class="badge-role">{{ session.get('role') }}</span>
+      </span>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </nav>
+  {% endif %}
+
+  <div class="{% if session.get('username') %}container{% endif %}">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </div>
+
+  {% if session.get('username') %}
+  <footer>WaveTies Logistics And Supply Chain Solutions · Stronger Ties</footer>
+  {% endif %}
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

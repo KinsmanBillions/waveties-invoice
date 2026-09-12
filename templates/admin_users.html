@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Users – WaveTies Admin{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>User Management</h1>
+  <a href="{{ url_for('admin_user_new') }}" class="btn btn-primary">+ Add User</a>
+</div>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Created</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td><b>{{ u.username }}</b></td>
+        <td>{{ u.name }}</td>
+        <td>
+          <span class="badge-role" style="{% if u.role == 'admin' %}background:#0A2540;color:#00B4D8;{% endif %}">
+            {{ u.role }}
+          </span>
+        </td>
+        <td>{{ 'Active' if u.active else 'Disabled' }}</td>
+        <td>{{ u.created_at or '—' }}</td>
+        <td>
+          <a href="{{ url_for('admin_user_edit', uid=u.id) }}" class="btn btn-sm btn-outline">Edit</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

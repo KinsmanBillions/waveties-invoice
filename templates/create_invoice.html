@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block title %}New Invoice – WaveTies{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Create Invoice</h1>
+  <a href="{{ url_for('invoice_list') }}" class="btn btn-outline">← Back</a>
+</div>
+
+<form method="POST" action="{{ url_for('create_invoice_page') }}" id="invoiceForm">
+  <div class="card">
+    <div class="card-title">Customer</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Customer Name *</label>
+        <input type="text" name="customer_name" required placeholder="e.g. Benjamin Kinsman">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="customer_email" placeholder="customer@email.com">
+      </div>
+    </div>
+    <div class="form-row-3">
+      <div class="form-group">
+        <label>Currency</label>
+        <select name="currency">
+          <option value="GHS" selected>GHS</option>
+          <option value="USD">USD</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Due in (days)</label>
+        <input type="number" name="due_days" value="30" min="1">
+      </div>
+      <div class="form-group">
+        <label>Tax Amount</label>
+        <input type="number" name="tax" value="0" step="0.01" min="0">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Amount Already Paid</label>
+      <input type="number" name="paid" value="0" step="0.01" min="0">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+      <span>Line Items</span>
+      <button type="button" class="btn btn-sm btn-navy" onclick="addRow()">+ Add Line</button>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="line-items-table" id="itemsTable">
+        <thead>
+          <tr>
+            <th>Tracking No. *</th>
+            <th>Item Name</th>
+            <th>Transport</th>
+            <th>Boxes</th>
+            <th>Wt (kg)</th>
+            <th>Vol (CBM)</th>
+            <th>Order No.</th>
+            <th>Amount *</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="itemsBody">
+          <tr>
+            <td><input type="text" name="tracking[]" required placeholder="KK300..."></td>
+            <td><input type="text" name="item_name[]" placeholder="A4 Paper"></td>
+            <td>
+              <select name="transport[]">
+                <option value="SEA_FREIGHT">SEA_FREIGHT</option>
+                <option value="AIR">AIR</option>
+                <option value="ROAD">ROAD</option>
+              </select>
+            </td>
+            <td><input type="number" name="boxes[]" value="1" min="1" style="width:60px;"></td>
+            <td><input type="number" name="weight_kg[]" step="0.1" min="0" style="width:70px;"></td>
+            <td><input type="number" name="vol_cbm[]" step="0.01" min="0" style="width:70px;"></td>
+            <td><input type="text" name="order_number[]" style="width:80px;"></td>
+            <td><input type="number" name="amount[]" step="0.01" min="0" required style="width:90px;"></td>
+            <td><span class="remove-row" onclick="removeRow(this)">×</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Payment Details (optional override)</div>
+    <div class="form-group">
+      <label>MOMO</label>
+      <input type="text" name="momo" value="{{ default_momo }}">
+    </div>
+    <div class="form-group">
+      <label>Bank Details (one line per entry)</label>
+      <textarea name="bank_details" rows="3">{{ default_bank }}</textarea>
+    </div>
+    <div class="form-group">
+      <label>Contact Phone</label>
+      <input type="text" name="contact_phone" value="{{ default_phone }}">
+    </div>
+  </div>
+
+  <div style="display:flex;gap:0.75rem;">
+    <button type="submit" class="btn btn-primary">Create Invoice</button>
+    <a href="{{ url_for('invoice_list') }}" class="btn btn-outline">Cancel</a>
+  </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function addRow() {
+  const tbody = document.getElementById('itemsBody');
+  const row = document.createElement('tr');
+  row.innerHTML = `
+    <td><input type="text" name="tracking[]" required placeholder="KK300..."></td>
+    <td><input type="text" name="item_name[]" placeholder="A4 Paper"></td>
+    <td>
+      <select name="transport[]">
+        <option value="SEA_FREIGHT">SEA_FREIGHT</option>
+        <option value="AIR">AIR</option>
+        <option value="ROAD">ROAD</option>
+      </select>
+    </td>
+    <td><input type="number" name="boxes[]" value="1" min="1" style="width:60px;"></td>
+    <td><input type="number" name="weight_kg[]" step="0.1" min="0" style="width:70px;"></td>
+    <td><input type="number" name="vol_cbm[]" step="0.01" min="0" style="width:70px;"></td>
+    <td><input type="text" name="order_number[]" style="width:80px;"></td>
+    <td><input type="number" name="amount[]" step="0.01" min="0" required style="width:90px;"></td>
+    <td><span class="remove-row" onclick="removeRow(this)">×</span></td>
+  `;
+  tbody.appendChild(row);
+}
+
+function removeRow(el) {
+  const tbody = document.getElementById('itemsBody');
+  if (tbody.rows.length <= 1) {
+    alert('At least one line item is required.');
+    return;
+  }
+  el.closest('tr').remove();
+}
+</script>
+{% endblock %}

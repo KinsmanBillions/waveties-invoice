@@ -1,0 +1,55 @@
+{
+  "next_invoice_seq": 59,
+  "invoices": {
+    "INV-202609-0058": {
+      "invoice_no": "INV-202609-0058",
+      "invoice_date": "Sep 08, 2026",
+      "due_date": "Oct 08, 2026",
+      "customer_name": "Benjamin Kinsman",
+      "customer_email": "kinsmanbenjamin@gmail.com",
+      "currency": "GHS",
+      "subtotal": 308.55,
+      "tax": 0.0,
+      "total": 308.55,
+      "paid": 0.0,
+      "balance_due": 308.55,
+      "momo": "FM ALPHA LOGISTICS & TRADING - 0598605311",
+      "bank_lines": [
+        "ZENITH (AIRPORT BRANCH)",
+        "JANET BOATENG (4010297670)"
+      ],
+      "contact_phone": "+233 (0)24 600 6186",
+      "items": [
+        {
+          "tracking": "KK300135928641",
+          "item_name": "A4 paperA4",
+          "transport": "SEA_FREIGHT",
+          "boxes": 1,
+          "weight_kg": 12.9,
+          "vol_cbm": 0.05,
+          "order_number": "",
+          "amount": 154.28
+        },
+        {
+          "tracking": "KK300135928242",
+          "item_name": "A4 paperA4",
+          "transport": "SEA_FREIGHT",
+          "boxes": 1,
+          "weight_kg": 13.0,
+          "vol_cbm": 0.05,
+          "order_number": "",
+          "amount": 154.28
+        }
+      ],
+      "created_at": "2026-09-08T12:26:52",
+      "created_by": "demo"
+    }
+  },
+  "customers": {
+    "kinsmanbenjamin@gmail.com": {
+      "name": "Benjamin Kinsman",
+      "email": "kinsmanbenjamin@gmail.com",
+      "phone": ""
+    }
+  }
+}

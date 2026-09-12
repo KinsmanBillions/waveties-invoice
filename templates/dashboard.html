@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Dashboard – WaveTies{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Dashboard</h1>
+  <a href="{{ url_for('create_invoice_page') }}" class="btn btn-primary">+ New Invoice</a>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="label">Total Invoices</div>
+    <div class="value">{{ stats.total }}</div>
+  </div>
+  <div class="stat-card" style="border-left-color:#F59E0B;">
+    <div class="label">Outstanding</div>
+    <div class="value">{{ stats.due }}</div>
+  </div>
+  <div class="stat-card" style="border-left-color:#10B981;">
+    <div class="label">Paid</div>
+    <div class="value">{{ stats.paid }}</div>
+  </div>
+  <div class="stat-card" style="border-left-color:#0A2540;">
+    <div class="label">Total Amount</div>
+    <div class="value" style="font-size:1.2rem;">GHS {{ "%.2f"|format(stats.total_amount) }}</div>
+  </div>
+  <div class="stat-card" style="border-left-color:#EF4444;">
+    <div class="label">Outstanding</div>
+    <div class="value" style="font-size:1.2rem;">GHS {{ "%.2f"|format(stats.outstanding) }}</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Recent Invoices</div>
+  {% if invoices %}
+  <table>
+    <thead>
+      <tr>
+        <th>Invoice No</th>
+        <th>Date</th>
+        <th>Customer</th>
+        <th>Total</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for no, inv in invoices %}
+      <tr>
+        <td><a href="{{ url_for('view_invoice', invoice_no=no) }}">{{ no }}</a></td>
+        <td>{{ inv.invoice_date }}</td>
+        <td>{{ inv.customer_name }}</td>
+        <td>{{ inv.currency or 'GHS' }} {{ "%.2f"|format(inv.total or 0) }}</td>
+        <td>
+          {% if (inv.balance_due or 0) <= 0 %}
+            <span class="status-paid">Paid</span>
+          {% else %}
+            <span class="status-due">Due</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ url_for('download_pdf', invoice_no=no) }}" class="btn btn-sm btn-outline">PDF</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color:var(--muted);">No invoices yet. <a href="{{ url_for('create_invoice_page') }}">Create the first one</a>.</p>
+  {% endif %}
+</div>
+{% endblock %}

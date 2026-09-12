@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Email Invoice – {{ invoice_no }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Email Invoice</h1>
+  <a href="{{ url_for('view_invoice', invoice_no=invoice_no) }}" class="btn btn-outline">← Back</a>
+</div>
+
+{% if not smtp_configured %}
+<div class="alert alert-warning">
+  Email is not configured yet. An admin must set SMTP details under <b>Email Setup</b>.
+  You can still copy the message and send manually, or use WhatsApp from the invoice page.
+</div>
+{% endif %}
+
+<div class="card" style="max-width:560px;">
+  <p><b>Invoice:</b> {{ invoice_no }} · {{ inv.customer_name }}</p>
+  <form method="POST">
+    <div class="form-group">
+      <label>To (email) *</label>
+      <input type="email" name="to_email" value="{{ default_to }}" required>
+    </div>
+    <div class="form-group">
+      <label>Subject</label>
+      <input type="text" name="subject" value="Invoice {{ invoice_no }} – WaveTies Logistics">
+    </div>
+    <div class="form-group">
+      <label>Message</label>
+      <textarea name="body" rows="8">{{ default_body }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary" {% if not smtp_configured %}disabled{% endif %}>
+      Send PDF by Email
+    </button>
+  </form>
+</div>
+{% endblock %}

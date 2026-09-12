@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Customers – WaveTies{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Customers</h1>
+  <a href="{{ url_for('customer_new') }}" class="btn btn-primary">+ Add Customer</a>
+</div>
+
+<div class="card">
+  {% if customers %}
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in customers %}
+      <tr>
+        <td><b>{{ c.name }}</b></td>
+        <td>{{ c.email or '—' }}</td>
+        <td>{{ c.phone or '—' }}</td>
+        <td style="white-space:nowrap;">
+          <a href="{{ url_for('customer_edit', key=c.email or c.name) }}" class="btn btn-sm btn-outline">Edit</a>
+          {% if user.role == 'admin' %}
+          <form method="POST" action="{{ url_for('customer_delete', key=c.email or c.name) }}" style="display:inline;"
+                onsubmit="return confirm('Delete this customer?');">
+            <button type="submit" class="btn btn-sm btn-outline" style="color:var(--danger);">Delete</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color:var(--muted);">No customers yet. Add one or create an invoice (customers are saved automatically).</p>
+  {% endif %}
+</div>
+{% endblock %}
