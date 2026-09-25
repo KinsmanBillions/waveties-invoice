@@ -25,8 +25,8 @@ COMPANY = {
     "name": "WAVETIES LOGISTICS AND SUPPLY CHAIN SOLUTIONS",
     "short_name": "WaveTies",
     "tagline": "Stronger Ties",
-    "phone": "+233 (0)24 600 6186",
-    "email": "billing@waveties.com",
+    "phone": "+233 (0)20 602 7020",
+    "email": "wavetieslog@gmail.com",
     "address": "Accra, Ghana",
     "logo_path": str(Path(__file__).parent / "logo_waveties_badge.png"),
     # Brand colours from logo (deep navy + cyan)
@@ -37,10 +37,11 @@ COMPANY = {
     "row_alt": colors.HexColor("#E8F4FC"),
     "text": colors.HexColor("#1A1A2E"),
     "muted": colors.HexColor("#5A6A7A"),
-    "momo": "FM ALPHA LOGISTICS & TRADING - 0598605311",
+        "momo": "NANA KWAME KUSI-OHEMENG - 0206027020",
     "bank_lines": [
-        "ZENITH (AIRPORT BRANCH)",
-        "JANET BOATENG (4010297670)",
+        "DEGREENS INNOVATION LTD",
+        "STANBIC BANK, MADINA MAIN",
+        "9040014136600",
     ],
 }
 
@@ -343,7 +344,7 @@ def build_notes_and_totals(styles, data):
     notes_text = f"""
     <b>Notes:</b><br/>
     Payment can be made into the accounts below:<br/>
-    <b>MOMO:</b> {momo}<br/>
+        <b>TELECEL CASH:</b> {momo}<br/>
     <b>BANK:</b> {bank_html}<br/><br/>
     If you have any query about this invoice please contact us on: {phone}.
     """
