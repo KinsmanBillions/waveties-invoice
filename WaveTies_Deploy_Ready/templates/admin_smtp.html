@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Email Setup – WaveTies{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Email (SMTP) Setup</h1>
+</div>
+
+<div class="card" style="max-width:520px;">
+  <p style="color:var(--muted);margin-bottom:1rem;font-size:0.9rem;">
+    Configure your email account so invoices can be sent to customers.
+    Common settings: Gmail (smtp.gmail.com, port 587, App Password), or your company mail server.
+  </p>
+  <form method="POST">
+    <div class="form-group">
+      <label>SMTP Host</label>
+      <input type="text" name="host" value="{{ cfg.host or '' }}" placeholder="smtp.gmail.com">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Port</label>
+        <input type="number" name="port" value="{{ cfg.port or 587 }}">
+      </div>
+      <div class="form-group">
+        <label><input type="checkbox" name="use_tls" value="1" {% if cfg.get('use_tls', True) %}checked{% endif %}> Use TLS</label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Username / Email</label>
+      <input type="text" name="user" value="{{ cfg.user or '' }}">
+    </div>
+    <div class="form-group">
+      <label>Password / App Password</label>
+      <input type="password" name="password" placeholder="{{ '••••••••' if cfg.password else '' }}">
+    </div>
+    <div class="form-group">
+      <label>From address (optional)</label>
+      <input type="email" name="from_email" value="{{ cfg.from_email or '' }}" placeholder="billing@waveties.com">
+    </div>
+    <button type="submit" class="btn btn-primary">Save SMTP Settings</button>
+  </form>
+</div>
+{% endblock %}

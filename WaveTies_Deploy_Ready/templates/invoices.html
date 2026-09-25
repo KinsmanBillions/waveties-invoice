@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}All Invoices – WaveTies{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>All Invoices</h1>
+  <div style="display:flex;gap:0.5rem;align-items:center;">
+    <a href="{{ url_for('invoice_list', status='all') }}" class="btn btn-sm {% if status_filter=='all' %}btn-navy{% else %}btn-outline{% endif %}">All</a>
+    <a href="{{ url_for('invoice_list', status='due') }}" class="btn btn-sm {% if status_filter=='due' %}btn-navy{% else %}btn-outline{% endif %}">Due</a>
+    <a href="{{ url_for('invoice_list', status='paid') }}" class="btn btn-sm {% if status_filter=='paid' %}btn-navy{% else %}btn-outline{% endif %}">Paid</a>
+    <a href="{{ url_for('create_invoice_page') }}" class="btn btn-primary">+ New Invoice</a>
+  </div>
+</div>
+
+<div class="card">
+  {% if invoices %}
+  <table>
+    <thead>
+      <tr>
+        <th>Invoice No</th>
+        <th>Date</th>
+        <th>Due Date</th>
+        <th>Customer</th>
+        <th>Items</th>
+        <th>Total</th>
+        <th>Balance</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for no, inv in invoices %}
+      <tr>
+        <td><a href="{{ url_for('view_invoice', invoice_no=no) }}"><b>{{ no }}</b></a></td>
+        <td>{{ inv.invoice_date }}</td>
+        <td>{{ inv.due_date or '—' }}</td>
+        <td>{{ inv.customer_name }}</td>
+        <td>{{ inv['items']|length if inv['items'] else 0 }}</td>
+        <td>{{ inv.currency or 'GHS' }} {{ "%.2f"|format(inv.total or 0) }}</td>
+        <td>{{ inv.currency or 'GHS' }} {{ "%.2f"|format(inv.balance_due or 0) }}</td>
+        <td>
+          {% if (inv.balance_due or 0) <= 0 %}
+            <span class="status-paid">Paid</span>
+          {% else %}
+            <span class="status-due">Due</span>
+          {% endif %}
+        </td>
+        <td style="white-space:nowrap;">
+          <a href="{{ url_for('view_invoice', invoice_no=no) }}" class="btn btn-sm btn-outline">View</a>
+          <a href="{{ url_for('download_pdf', invoice_no=no) }}" class="btn btn-sm btn-primary">PDF</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color:var(--muted);">No invoices found.</p>
+  {% endif %}
+</div>
+{% endblock %}
